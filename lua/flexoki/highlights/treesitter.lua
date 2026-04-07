@@ -44,7 +44,7 @@ M.groups = function()
 		['@parameter']         = { link = 'Identifier' },
 		['@method']            = { link = 'Function' },
 		['@field']             = { link = 'Identifier' },
-		['@property']          = { fg = c['cy'] },
+		['@property']          = { fg = c['bl'] },
 		['@constructor']       = { fg = c['or'] },
 		['@constructor.tsx']   = { fg = c['bl'] },
 
