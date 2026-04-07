@@ -29,8 +29,12 @@ M.groups = function()
 		["TodoFgPERF"]   = { fg   = c['pu'] },
 		["TodoSignPERF"] = { link = "TodoFgPERF" },
 
-		["TodoBgNOTE"]   = { bg   = c['cy'], fg = c['bg'], bold = true },
-		["TodoFgNOTE"]   = { fg   = c['cy'] },
+		["TodoBgNOTE"]   = { bg   = c['ma'], fg = c['bg'], bold = true },
+		["TodoFgNOTE"]   = { fg   = c['ma'] },
+
+		["TodoBgINFO"]   = { bg   = c['cy'], fg = c['bg'], bold = true },
+		["TodoFgINFO"]   = { fg   = c['cy'] },
+		["TodoSignINFO"] = { link = "TodoFgINFO" },
 		["TodoSignNOTE"] = { link = "TodoFgNOTE" },
 
 		["TodoBgTEST"]   = { bg   = c['gr'], fg = c['bg'], bold = true },
