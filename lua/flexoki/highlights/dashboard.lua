@@ -7,9 +7,9 @@ M.groups = function()
 
 	--- @type table<string, vim.api.keyset.highlight>
 	return {
-		["DashboardHeader"] = { fg = c.blue,   bg = 'NONE' },
-		["DashboardCenter"] = { fg = c.purple, bg = 'NONE' },
-		["DashboardFooter"] = { fg = c.cyan,   bg = 'NONE' },
+		["DashboardHeader"] = { fg = c['bl'] },
+		["DashboardCenter"] = { fg = c['pu'] },
+		["DashboardFooter"] = { fg = c['cy'] },
 	}
 end
 

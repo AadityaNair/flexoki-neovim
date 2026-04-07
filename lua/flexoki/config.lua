@@ -21,12 +21,41 @@ M.options = {
 	---@type Variant?
 	light_variant = 'light',
 
+	---Make background transparent (sets Normal bg to NONE)
+	---@type boolean
+	transparent = false,
+
+	---Set terminal colors (vim.g.terminal_color_*)
+	---@type boolean
+	terminal_colors = true,
+
+	---Dim inactive windows (NormalNC gets darker background)
+	---@type boolean
+	dim_inactive = false,
+
+	---Style overrides for syntax groups
+	---@type { comments: vim.api.keyset.highlight?, keywords: vim.api.keyset.highlight?, functions: vim.api.keyset.highlight?, variables: vim.api.keyset.highlight? }
+	styles = {
+		comments = {},
+		keywords = {},
+		functions = {},
+		variables = {},
+	},
+
 	---The style to use for float windows, `winborder == 'none'` works best
 	---with a different background than code, while all the other ones work
 	---best with the same one, 'auto' will check `vim.opt.winborder` when
 	---applying the colorscheme to decide
 	---@type FloatWindowStyle?
 	float_window_style = 'auto',
+
+	---Hook to modify colors before highlights are generated
+	---@type fun(colors: table)?
+	on_colors = nil,
+
+	---Hook to modify highlights before they are applied
+	---@type fun(highlights: table, colors: table)?
+	on_highlights = nil,
 
 	---@type table<string, vim.api.keyset.highlight>?
 	highlight_groups = {},

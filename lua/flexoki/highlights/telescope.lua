@@ -7,9 +7,9 @@ M.groups = function()
 
 	--- @type table<string, vim.api.keyset.highlight>
 	return {
-		["TelescopeSelection"] = { fg = c.hint_blue,   bg = 'NONE' },
-		["TelescopeMatching"]  = { fg = c.info_yellow, bg = 'NONE', bold = true, },
-		["TelescopeBorder"]    = { fg = c.blue,        bg = c.bg },
+		["TelescopeSelection"] = { fg = c['bl'] },
+		["TelescopeMatching"]  = { fg = c['ye'], bold = true },
+		["TelescopeBorder"]    = { fg = c['tx-3'], bg = c['bg'] },
 	}
 end
 

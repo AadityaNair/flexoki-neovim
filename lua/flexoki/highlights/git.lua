@@ -7,12 +7,12 @@ M.groups = function()
 
 	--- @type table<string, vim.api.keyset.highlight>
 	return {
-		["SignAdd"]        = { fg = c.sign_add,    bg = 'NONE' },
-		["SignChange"]     = { fg = c.sign_change, bg = 'NONE' },
-		["SignDelete"]     = { fg = c.sign_delete, bg = 'NONE' },
-		["GitSignsAdd"]    = { fg = c.sign_add,    bg = 'NONE' },
-		["GitSignsChange"] = { fg = c.sign_change, bg = 'NONE' },
-		["GitSignsDelete"] = { fg = c.sign_delete, bg = 'NONE' },
+		["GitSignsAdd"]    = { fg = c['gr'] },
+		["GitSignsChange"] = { fg = c['or'] },
+		["GitSignsDelete"] = { fg = c['re'] },
+		["SignAdd"]        = { fg = c['gr'] },
+		["SignChange"]     = { fg = c['or'] },
+		["SignDelete"]     = { fg = c['re'] },
 	}
 end
 

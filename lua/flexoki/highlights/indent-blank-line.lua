@@ -7,11 +7,13 @@ M.groups = function()
 
 	--- @type table<string, vim.api.keyset.highlight>
 	return {
-		["IndentBlanklineContextChar"]        = { fg = c.context,     bg = 'NONE' },
-		["IndentBlanklineContextStart"]       = { fg = 'NONE',        bg = 'NONE', underline = true, },
-		["IndentBlanklineChar"]               = { fg = c.dark_gray,   bg = 'NONE' },
-		["IndentBlanklineSpaceChar"]          = { fg = c.cyan_test,   bg = 'NONE' },
-		["IndentBlanklineSpaceCharBlankline"] = { fg = c.info_yellow, bg = 'NONE' },
+		-- v3 (indent-blankline.nvim)
+		["IblIndent"] = { fg = c['ui-2'], nocombine = true },
+		["IblScope"]  = { fg = c['bl'],   nocombine = true },
+		-- Legacy v2 names
+		["IndentBlanklineChar"]         = { fg = c['ui-2'], nocombine = true },
+		["IndentBlanklineContextChar"]  = { fg = c['bl'],   nocombine = true },
+		["IndentBlanklineContextStart"] = { underline = true, sp = c['bl'] },
 	}
 end
 

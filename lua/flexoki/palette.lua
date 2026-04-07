@@ -121,6 +121,10 @@ M.palette = function ()
 		vim.o.background = variant.background
 	end
 
+	if config.options.on_colors then
+		config.options.on_colors(variant)
+	end
+
 	return variant
 end
 
