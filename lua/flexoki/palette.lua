@@ -135,8 +135,56 @@ local base_colors = {
 	['flexoki-magenta-950']   = '#24131D',
 }
 
+-- The eight Flexoki hues, keyed by the short name used in highlights.
+local hues = {
+	['re'] = 'red',
+	['or'] = 'orange',
+	['ye'] = 'yellow',
+	['gr'] = 'green',
+	['cy'] = 'cyan',
+	['bl'] = 'blue',
+	['pu'] = 'purple',
+	['ma'] = 'magenta',
+}
+
+-- Every hue gets five tiers. Flexoki's rule is that dark mode takes the
+-- 400 level as its primary accent and light mode takes 600, so each tier
+-- is mirrored between the two variants and the same key works in both.
+--
+--   X        primary accent
+--   X-2      dim / secondary accent
+--   X-3      bright / emphasis
+--   X-bg     subtle tinted background
+--   X-bg-2   stronger tinted background
+local accent_tiers = {
+	dark  = { [''] = 400, ['-2'] = 600, ['-3'] = 300, ['-bg'] = 950, ['-bg-2'] = 900 },
+	light = { [''] = 600, ['-2'] = 400, ['-3'] = 700, ['-bg'] =  50, ['-bg-2'] = 100 },
+}
+
+--- Build the 40 accent slots (8 hues x 5 tiers) for one variant.
+--- @param variant string 'dark' or 'light'
+--- @return table<string, string>
+local function accents(variant)
+	local out = {}
+
+	for key, hue in pairs(hues) do
+		for suffix, level in pairs(accent_tiers[variant]) do
+			local name = 'flexoki-' .. hue .. '-' .. level
+			local color = base_colors[name]
+
+			-- A missing level would silently become nil and break every
+			-- highlight using it, so fail loudly instead.
+			assert(color, 'flexoki: no such base color: ' .. name)
+
+			out[key .. suffix] = color
+		end
+	end
+
+	return out
+end
+
 local variants = {
-	dark = {
+	dark = vim.tbl_extend('error', accents('dark'), {
 		_name      = 'dark',
 		background = 'dark',
 		['bg']     = base_colors['flexoki-black'],
@@ -147,24 +195,8 @@ local variants = {
 		['tx-3']   = base_colors['flexoki-700'],
 		['tx-2']   = base_colors['flexoki-500'],
 		['tx']     = base_colors['flexoki-200'],
-		['re']     = base_colors['flexoki-red-400'],
-		['re-2']   = base_colors['flexoki-red-600'],
-		['or']     = base_colors['flexoki-orange-400'],
-		['or-2']   = base_colors['flexoki-orange-600'],
-		['ye']     = base_colors['flexoki-yellow-400'],
-		['ye-2']   = base_colors['flexoki-yellow-600'],
-		['gr']     = base_colors['flexoki-green-400'],
-		['gr-2']   = base_colors['flexoki-green-600'],
-		['cy']     = base_colors['flexoki-cyan-400'],
-		['cy-2']   = base_colors['flexoki-cyan-600'],
-		['bl']     = base_colors['flexoki-blue-400'],
-		['bl-2']   = base_colors['flexoki-blue-600'],
-		['pu']     = base_colors['flexoki-purple-400'],
-		['pu-2']   = base_colors['flexoki-purple-600'],
-		['ma']     = base_colors['flexoki-magenta-400'],
-		['ma-2']   = base_colors['flexoki-magenta-600'],
-	},
-	light = {
+	}),
+	light = vim.tbl_extend('error', accents('light'), {
 		_name      = 'light',
 		background = 'light',
 		['bg']     = base_colors['flexoki-paper'],
@@ -175,23 +207,7 @@ local variants = {
 		['tx-3']   = base_colors['flexoki-300'],
 		['tx-2']   = base_colors['flexoki-600'],
 		['tx']     = base_colors['flexoki-black'],
-		['re']     = base_colors['flexoki-red-600'],
-		['re-2']   = base_colors['flexoki-red-400'],
-		['or']     = base_colors['flexoki-orange-600'],
-		['or-2']   = base_colors['flexoki-orange-400'],
-		['ye']     = base_colors['flexoki-yellow-600'],
-		['ye-2']   = base_colors['flexoki-yellow-400'],
-		['gr']     = base_colors['flexoki-green-600'],
-		['gr-2']   = base_colors['flexoki-green-400'],
-		['cy']     = base_colors['flexoki-cyan-600'],
-		['cy-2']   = base_colors['flexoki-cyan-400'],
-		['bl']     = base_colors['flexoki-blue-600'],
-		['bl-2']   = base_colors['flexoki-blue-400'],
-		['pu']     = base_colors['flexoki-purple-600'],
-		['pu-2']   = base_colors['flexoki-purple-400'],
-		['ma']     = base_colors['flexoki-magenta-600'],
-		['ma-2']   = base_colors['flexoki-magenta-400'],
-	}
+	}),
 }
 
 M.palette = function ()
