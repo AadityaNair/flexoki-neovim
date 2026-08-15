@@ -1,6 +1,5 @@
 local palette = require('flexoki.palette')
 local config = require('flexoki.config')
-local util = require('flexoki.util')
 
 local M = {}
 
@@ -54,11 +53,12 @@ M.groups = function()
 		["CurSearch"]  = { fg = c['tx'], bg = c['ye-2'], blend = 50 },
 		["Substitute"] = { fg = c['tx'], bg = c['gr'], blend = 50 },
 
-		-- Diff
-		["DiffAdd"]    = { fg = c['bg'],   bg = c['gr'] },
-		["DiffChange"] = { fg = c['bg-2'], bg = c['pu'] },
-		["DiffDelete"] = { fg = c['bg-2'], bg = c['re'] },
-		["DiffText"]   = { fg = c['bg'],   bg = c['bl-2'] },
+		-- Diff. Tinted backgrounds under unchanged text, rather than a
+		-- saturated fill with the background colour inverted into the text.
+		["DiffAdd"]    = { bg = c['diff-add'] },
+		["DiffChange"] = { bg = c['diff-change'] },
+		["DiffDelete"] = { bg = c['diff-delete'] },
+		["DiffText"]   = { bg = c['diff-text'] },
 
 		-- Syntax (style-aware)
 		["Comment"] = vim.tbl_extend('force', { fg = c['tx-3'], bg = 'NONE' }, opts.styles.comments or {}),
@@ -180,10 +180,10 @@ M.groups = function()
 		["DiagnosticOk"]    = { fg = c['ok'] },
 		["DiagnosticUnnecessary"] = { fg = c['comment'] },
 
-		["DiagnosticVirtualTextError"] = { fg = c['error'],   bg = util.blend(c['error'], c['bg'], 0.1) },
-		["DiagnosticVirtualTextWarn"]  = { fg = c['warning'], bg = util.blend(c['warning'], c['bg'], 0.1) },
-		["DiagnosticVirtualTextInfo"]  = { fg = c['info'],    bg = util.blend(c['info'], c['bg'], 0.1) },
-		["DiagnosticVirtualTextHint"]  = { fg = c['hint'],    bg = util.blend(c['hint'], c['bg'], 0.1) },
+		["DiagnosticVirtualTextError"] = { fg = c['error'],   bg = c['error-bg'] },
+		["DiagnosticVirtualTextWarn"]  = { fg = c['warning'], bg = c['warning-bg'] },
+		["DiagnosticVirtualTextInfo"]  = { fg = c['info'],    bg = c['info-bg'] },
+		["DiagnosticVirtualTextHint"]  = { fg = c['hint'],    bg = c['hint-bg'] },
 
 		["DiagnosticUnderlineError"] = { undercurl = true, sp = c['error'] },
 		["DiagnosticUnderlineWarn"]  = { undercurl = true, sp = c['warning'] },
@@ -201,18 +201,18 @@ M.groups = function()
 		["LspReferenceWrite"]           = { bg = c['ui'] },
 		["LspSignatureActiveParameter"] = { bg = c['ui-2'], bold = true },
 		["LspCodeLens"]                 = { fg = c['tx-3'] },
-		["LspInlayHint"]                = { fg = c['tx-3'], bg = util.blend(c['bl'], c['bg'], 0.1) },
+		["LspInlayHint"]                = { fg = c['comment'], bg = c['hint-bg'] },
 
 		-- Git diff (file-level)
 		["Added"]   = { fg = c['git-add'] },
 		["Removed"] = { fg = c['git-delete'] },
 		["Changed"] = { fg = c['git-change'] },
 
-		["diffAdded"]    = { fg = c['git-add'],    bg = util.blend(c['git-add'], c['bg'], 0.1) },
-		["diffRemoved"]  = { fg = c['git-delete'], bg = util.blend(c['git-delete'], c['bg'], 0.1) },
-		["diffChanged"]  = { fg = c['git-change'], bg = util.blend(c['bl'], c['bg'], 0.1) },
-		["diffOldFile"]  = { fg = c['bl'], bg = util.blend(c['git-delete'], c['bg'], 0.1) },
-		["diffNewFile"]  = { fg = c['bl'], bg = util.blend(c['git-add'], c['bg'], 0.1) },
+		["diffAdded"]    = { fg = c['git-add'],    bg = c['diff-add'] },
+		["diffRemoved"]  = { fg = c['git-delete'], bg = c['diff-delete'] },
+		["diffChanged"]  = { fg = c['git-change'], bg = c['diff-change'] },
+		["diffOldFile"]  = { fg = c['bl'], bg = c['diff-delete'] },
+		["diffNewFile"]  = { fg = c['bl'], bg = c['diff-add'] },
 		["diffFile"]     = { fg = c['bl'] },
 		["diffLine"]     = { fg = c['comment'] },
 		["diffIndexLine"] = { fg = c['ma'] },
@@ -223,7 +223,7 @@ M.groups = function()
 		["healthWarning"] = { fg = c['ye'] },
 
 		-- Debug
-		["debugBreakpoint"] = { fg = c['cy'], bg = util.blend(c['cy'], c['bg'], 0.1) },
+		["debugBreakpoint"] = { fg = c['info'], bg = c['info-bg'] },
 		["debugPC"]         = { bg = c['bg-2'] },
 
 		-- HTML headings

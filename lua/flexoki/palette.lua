@@ -292,10 +292,15 @@ local function semantics(c)
 		['diff-delete'] = c['re-bg'],
 		['diff-text']   = c['bl-bg-2'],
 
-		-- Cycled for things like markdown heading levels
+		-- Cycled for things like markdown heading levels. rainbow-bg holds
+		-- the matching tint for each entry, by index.
 		['rainbow'] = {
 			c['bl'], c['ye'], c['gr'], c['cy'],
 			c['ma'], c['pu'], c['or'], c['re'],
+		},
+		['rainbow-bg'] = {
+			c['bl-bg'], c['ye-bg'], c['gr-bg'], c['cy-bg'],
+			c['ma-bg'], c['pu-bg'], c['or-bg'], c['re-bg'],
 		},
 
 		-- Terminal ANSI 0-15

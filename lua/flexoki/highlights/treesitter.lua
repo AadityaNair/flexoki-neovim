@@ -1,6 +1,5 @@
 local palette = require('flexoki.palette')
 local config = require('flexoki.config')
-local util = require('flexoki.util')
 
 local M = {}
 
@@ -148,10 +147,9 @@ M.groups = function()
 	}
 
 	-- Rainbow heading colors for markdown
-	local rainbow = { c['bl'], c['ye'], c['gr'], c['cy'], c['ma'], c['pu'], c['or'], c['re'] }
-	for i, color in ipairs(rainbow) do
+	for i, color in ipairs(c['rainbow']) do
 		ret['@markup.heading.' .. i .. '.markdown'] = {
-			fg = color, bold = true, bg = util.blend(color, c['bg'], 0.1),
+			fg = color, bold = true, bg = c['rainbow-bg'][i],
 		}
 	end
 
