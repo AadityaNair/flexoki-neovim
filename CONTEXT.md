@@ -147,6 +147,81 @@ local kinds = require('flexoki.highlights.kinds')
 kinds.kinds(ret, "PluginKind%s")  -- generates PluginKindClass, PluginKindFunction, etc.
 ```
 
+### Which colour to reach for
+
+Work down this list and stop at the first row that fits. Naming a raw hue is the
+last resort, not the default.
+
+| The group means… | Use |
+|---|---|
+| An error / warning / info / hint / success | `c['error']` `c['warning']` `c['info']` `c['hint']` `c['ok']` |
+| …and needs a tinted background behind it | the matching `c['error-bg']`, etc. |
+| Added / changed / deleted in git | `c['git-add']` `c['git-change']` `c['git-delete']` |
+| A diff region's background | `c['diff-add']` `c['diff-change']` `c['diff-delete']` `c['diff-text']` |
+| Body text, dimmed text, a comment | `c['fg']` `c['fg-dark']` `c['comment']` |
+| A float / popup / sidebar / statusline background | `c['bg-float']` `c['bg-popup']` `c['bg-sidebar']` `c['bg-statusline']` |
+| A float's border | `c['border']` on `c['bg-float-border']` |
+| A selection or a search match | `c['bg-visual']` `c['bg-search']` |
+| Cycling through N colours (heading levels, nesting) | `c['rainbow'][i]` + `c['rainbow-bg'][i]` |
+| Genuinely just "the blue one" | `c['bl']` and its tiers |
+
+When it really is a raw hue, pick the tier by role rather than by eye:
+
+- `c['bl']` — the default; ordinary coloured text.
+- `c['bl-2']` — a second, quieter thing sitting next to something already using `bl`.
+- `c['bl-3']` — this must *win* attention: the current match, the matched bracket,
+  the selected item.
+- `c['bl-bg']` / `c['bl-bg-2']` — a background tint under otherwise-normal text.
+  Don't put unrelated foreground text on these; they're a wash, not a fill.
+
+Avoid inverting a saturated accent as a background with `fg = c['bg']` unless the
+group is genuinely modal (current search match, mode indicator). It overrides the
+syntax highlighting underneath, which is why the `Diff*` groups moved off that
+pattern.
+
+### Verifying a change
+
+There are no tests, so diff the *resolved* highlights instead. This catches both
+"I broke something unrelated" and "my refactor wasn't the no-op I claimed".
+`:highlight` output order is nondeterministic, so always sort before diffing.
+
+```sh
+dump() {  # $1 = colorscheme, $2 = outfile
+  nvim --headless --noplugin -u NONE -c "set rtp+=$PWD" \
+    -c "colorscheme $1" -c "redir! > $2.raw" -c "silent highlight" \
+    -c "redir END" -c qa 2>/dev/null
+  grep -v '^$' "$2.raw" | sort > "$2"
+}
+dump flexoki-dark after.txt
+git stash -q && dump flexoki-dark before.txt && git stash pop -q
+diff before.txt after.txt        # expect no output for a pure refactor
+```
+
+Run it for `flexoki-light` too — bugs have shown up in only one variant.
+
+To catch the palette-typo failure mode specifically (a bad key resolves to `nil`,
+which `util.highlight` turns into `'none'`, so the group silently renders
+unstyled):
+
+```sh
+nvim --headless --noplugin -u NONE -c "set rtp+=$PWD" -c "colorscheme flexoki-dark" -c "lua
+  for _, g in ipairs(vim.fn.getcompletion('', 'highlight')) do
+    local h = vim.api.nvim_get_hl(0, { name = g })
+    if not h.link and next(h) == nil then print('EMPTY: ' .. g) end
+  end" -c qa
+```
+
+A short list is expected: groups that are deliberately cleared (`@none`,
+`Conceal`, `EndOfBuffer`, `SignColumn`, `Statement`, `MatchParenCur`, …) plus a
+few Neovim built-ins the theme doesn't set. Anything else in that list is a typo.
+
+### Keeping the terminal palette in sync
+
+`term-0`…`term-15` are also the reference for the terminal emulator's own ANSI
+palette. If these change, the emulator config should change with them, otherwise
+a `:terminal` buffer and a bare shell disagree. See `THEME.md` in the dotfiles
+repo, which tracks the other side of that.
+
 ## Common pitfalls
 
 - **Palette key typos silently break highlights.** `c['re']` works, `c.red` / `c.error_red` returns nil. All disabled modules were originally broken because of this.
