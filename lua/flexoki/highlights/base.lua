@@ -173,27 +173,27 @@ M.groups = function()
 		["VisualNOS"]    = { fg = 'NONE',  bg = c['ui-3'] },
 
 		-- Diagnostics
-		["DiagnosticError"] = { fg = c['re'] },
-		["DiagnosticWarn"]  = { fg = c['ye'] },
-		["DiagnosticInfo"]  = { fg = c['cy'] },
-		["DiagnosticHint"]  = { fg = c['bl'] },
-		["DiagnosticOk"]    = { fg = c['gr'] },
-		["DiagnosticUnnecessary"] = { fg = c['tx-3'] },
+		["DiagnosticError"] = { fg = c['error'] },
+		["DiagnosticWarn"]  = { fg = c['warning'] },
+		["DiagnosticInfo"]  = { fg = c['info'] },
+		["DiagnosticHint"]  = { fg = c['hint'] },
+		["DiagnosticOk"]    = { fg = c['ok'] },
+		["DiagnosticUnnecessary"] = { fg = c['comment'] },
 
-		["DiagnosticVirtualTextError"] = { fg = c['re'], bg = util.blend(c['re'], c['bg'], 0.1) },
-		["DiagnosticVirtualTextWarn"]  = { fg = c['ye'], bg = util.blend(c['ye'], c['bg'], 0.1) },
-		["DiagnosticVirtualTextInfo"]  = { fg = c['cy'], bg = util.blend(c['cy'], c['bg'], 0.1) },
-		["DiagnosticVirtualTextHint"]  = { fg = c['bl'], bg = util.blend(c['bl'], c['bg'], 0.1) },
+		["DiagnosticVirtualTextError"] = { fg = c['error'],   bg = util.blend(c['error'], c['bg'], 0.1) },
+		["DiagnosticVirtualTextWarn"]  = { fg = c['warning'], bg = util.blend(c['warning'], c['bg'], 0.1) },
+		["DiagnosticVirtualTextInfo"]  = { fg = c['info'],    bg = util.blend(c['info'], c['bg'], 0.1) },
+		["DiagnosticVirtualTextHint"]  = { fg = c['hint'],    bg = util.blend(c['hint'], c['bg'], 0.1) },
 
-		["DiagnosticUnderlineError"] = { undercurl = true, sp = c['re'] },
-		["DiagnosticUnderlineWarn"]  = { undercurl = true, sp = c['ye'] },
-		["DiagnosticUnderlineInfo"]  = { undercurl = true, sp = c['cy'] },
-		["DiagnosticUnderlineHint"]  = { undercurl = true, sp = c['bl'] },
+		["DiagnosticUnderlineError"] = { undercurl = true, sp = c['error'] },
+		["DiagnosticUnderlineWarn"]  = { undercurl = true, sp = c['warning'] },
+		["DiagnosticUnderlineInfo"]  = { undercurl = true, sp = c['info'] },
+		["DiagnosticUnderlineHint"]  = { undercurl = true, sp = c['hint'] },
 
-		["DiagnosticSignError"] = { fg = c['re'] },
-		["DiagnosticSignWarn"]  = { fg = c['ye'] },
-		["DiagnosticSignInfo"]  = { fg = c['cy'] },
-		["DiagnosticSignHint"]  = { fg = c['bl'] },
+		["DiagnosticSignError"] = { fg = c['error'] },
+		["DiagnosticSignWarn"]  = { fg = c['warning'] },
+		["DiagnosticSignInfo"]  = { fg = c['info'] },
+		["DiagnosticSignHint"]  = { fg = c['hint'] },
 
 		-- LSP
 		["LspReferenceText"]            = { bg = c['ui'] },
@@ -204,17 +204,17 @@ M.groups = function()
 		["LspInlayHint"]                = { fg = c['tx-3'], bg = util.blend(c['bl'], c['bg'], 0.1) },
 
 		-- Git diff (file-level)
-		["Added"]   = { fg = c['gr'] },
-		["Removed"] = { fg = c['re'] },
-		["Changed"] = { fg = c['or'] },
+		["Added"]   = { fg = c['git-add'] },
+		["Removed"] = { fg = c['git-delete'] },
+		["Changed"] = { fg = c['git-change'] },
 
-		["diffAdded"]    = { fg = c['gr'], bg = util.blend(c['gr'], c['bg'], 0.1) },
-		["diffRemoved"]  = { fg = c['re'], bg = util.blend(c['re'], c['bg'], 0.1) },
-		["diffChanged"]  = { fg = c['or'], bg = util.blend(c['bl'], c['bg'], 0.1) },
-		["diffOldFile"]  = { fg = c['bl'], bg = util.blend(c['re'], c['bg'], 0.1) },
-		["diffNewFile"]  = { fg = c['bl'], bg = util.blend(c['gr'], c['bg'], 0.1) },
+		["diffAdded"]    = { fg = c['git-add'],    bg = util.blend(c['git-add'], c['bg'], 0.1) },
+		["diffRemoved"]  = { fg = c['git-delete'], bg = util.blend(c['git-delete'], c['bg'], 0.1) },
+		["diffChanged"]  = { fg = c['git-change'], bg = util.blend(c['bl'], c['bg'], 0.1) },
+		["diffOldFile"]  = { fg = c['bl'], bg = util.blend(c['git-delete'], c['bg'], 0.1) },
+		["diffNewFile"]  = { fg = c['bl'], bg = util.blend(c['git-add'], c['bg'], 0.1) },
 		["diffFile"]     = { fg = c['bl'] },
-		["diffLine"]     = { fg = c['tx-3'] },
+		["diffLine"]     = { fg = c['comment'] },
 		["diffIndexLine"] = { fg = c['ma'] },
 
 		-- Health
