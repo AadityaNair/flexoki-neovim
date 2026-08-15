@@ -18,7 +18,7 @@ M.groups = function()
 		['NeoTreeDirectoryIcon']      = { fg = c['ye'],   bg = 'NONE' },
 		['NeoTreeDirectoryName']      = { fg = c['bl'],   bg = 'NONE' },
 
-		['NeoTreeDotfile']            = { fg = c['mg'],   bg = 'NONE' },
+		['NeoTreeDotfile']            = { fg = c['ma'],   bg = 'NONE' },
 
 		['NeoTreeFileIcon']           = { fg = c['cy'],   bg = 'NONE' },
 		['NeoTreeFileName']           = { fg = c['tx'],   bg = 'NONE' },
