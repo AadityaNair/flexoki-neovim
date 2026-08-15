@@ -226,6 +226,46 @@ M.groups = function()
 		-- Help
 		["helpCommand"] = { fg = c['bl'], bg = c['ui'] },
 		["helpExample"] = { fg = c['tx-3'] },
+
+		-- TODO: Neovim default groups this theme does not set yet.
+		--
+		-- Of the 54 built-in groups we don't touch, 45 link to groups we do
+		-- theme (DiagnosticVirtualLinesError -> DiagnosticError, PmenuKind ->
+		-- Pmenu, @lsp.type.class -> @type, and so on). Those inherit correctly
+		-- and must be left alone -- setting them directly would break the link
+		-- and duplicate what we already define.
+		--
+		-- These seven do not link. Neovim gives them a hardcoded value that
+		-- isn't a Flexoki colour, or nothing at all:
+		--
+		--   FloatShadow            bg=#4F5258 blend=80   -> c['bg-2'], blend 80
+		--   FloatShadowThrough     bg=#4F5258 blend=100  -> c['bg-2'], blend 100
+		--       PmenuShadow and PmenuShadowThrough link to these two, so
+		--       fixing them covers four groups.
+		--   OkMsg                  fg=#B3F6C0            -> c['ok']
+		--   DiagnosticDeprecated   strikethrough sp=#FFC0B9 -> sp = c['comment']
+		--       @lsp.mod.deprecated links here.
+		--   DiagnosticUnderlineOk  underline sp=#B3F6C0  -> sp = c['ok']
+		--       The only DiagnosticUnderline* still on Neovim's colour; the
+		--       other four already use our diagnostic slots.
+		--   ComplMatchIns          (unset)               -> c['comment']
+		--   StdoutMsg              (unset)               -> c['fg-dark']
+		--
+		-- Deliberately skipped: @markup.heading.1.delimiter.vimdoc and
+		-- @markup.heading.2.delimiter.vimdoc are fg=bg on purpose, to hide the
+		-- === rules under vimdoc headings.
+		--
+		-- Checked against Neovim 0.12.4. Upstream master (0.13.0-dev) adds no
+		-- new highlight groups -- same 206 documented hl-* tags and 90
+		-- treesitter captures -- so this list still holds, but re-derive it
+		-- when 0.13 lands:
+		--
+		--   nvim --clean --headless -c 'lua
+		--     local n={} for k in pairs(vim.api.nvim_get_hl(0,{})) do n[#n+1]=k end
+		--     table.sort(n) print(table.concat(n,"\n"))' -c qa
+		--
+		-- then diff against the group names set under lua/flexoki/highlights/,
+		-- and classify each gap by whether nvim_get_hl reports a .link.
 	}
 end
 
