@@ -258,8 +258,8 @@ local function semantics(c)
 		['bg-popup']        = c['bg-2'],
 		['bg-sidebar']      = c['bg-2'],
 		['bg-statusline']   = c['ui-3'],
-		['bg-visual']       = c['ui-2'],
-		['bg-search']       = c['ye'],
+		['bg-visual']       = c['bl-bg-2'],
+		['bg-search']       = c['ye-bg-2'],
 		['bg-highlight']    = c['ui'],
 
 		-- Borders

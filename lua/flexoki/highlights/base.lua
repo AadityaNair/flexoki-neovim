@@ -32,11 +32,13 @@ M.groups = function()
 		["NonText"]     = { fg = c['tx-3'], bg = 'NONE' },
 		["EndOfBuffer"] = { fg = 'NONE', bg    = 'NONE' },
 
-		-- Search
-		["Search"]     = { fg = c['tx'], bg = c['ye'] },
-		["IncSearch"]  = { fg = c['tx'], bg = c['ye'], blend = 50 },
-		["CurSearch"]  = { fg = c['tx'], bg = c['ye-2'], blend = 50 },
-		["Substitute"] = { fg = c['tx'], bg = c['gr'], blend = 50 },
+		-- Search. Resting matches sit on a tint so surrounding syntax stays
+		-- readable; the match under the cursor takes the bright tier so it
+		-- is obvious which one you are on.
+		["Search"]     = { fg = c['fg'], bg = c['bg-search'] },
+		["IncSearch"]  = { fg = c['bg'], bg = c['ye-3'] },
+		["CurSearch"]  = { fg = c['bg'], bg = c['ye-3'] },
+		["Substitute"] = { fg = c['bg'], bg = c['re-3'] },
 
 		-- Diff. Tinted backgrounds under unchanged text, rather than a
 		-- saturated fill with the background colour inverted into the text.
@@ -127,11 +129,13 @@ M.groups = function()
 		["WinSeparator"]   = { fg = c['bg-2'], bg = c['bg-2'] },
 		["WinSeparatorNC"] = { fg = c['ui-3'], bg = c['ui-3'] },
 		["VertSplit"]      = { fg = c['ui'] },
-		["WarningMsg"]     = { fg = c['re'],   bg = c['bg'] },
+		["WarningMsg"]     = { fg = c['warning'], bg = c['bg'] },
 		["QuickFixLine"]   = { fg = 'NONE',    bg = c['ui'] },
 
-		["MatchWord"]      = { fg = 'NONE', bg = c['ui'] },
-		["MatchParen"]     = { fg = 'NONE', bg = c['ui'] },
+		-- The bracket under the cursor had only a faint background, which is
+		-- hard to spot against CursorLine. Colour the character itself.
+		["MatchWord"]      = { fg = c['or-3'], bg = c['bg-highlight'], bold = true },
+		["MatchParen"]     = { fg = c['or-3'], bg = c['bg-highlight'], bold = true },
 		["MatchWordCur"]   = { fg = 'NONE', bg = 'NONE' },
 		["MatchParenCur"]  = { fg = 'NONE', bg = 'NONE' },
 
@@ -140,7 +144,7 @@ M.groups = function()
 
 		["SpecialKey"] = { fg = c['bl'],   bg = 'NONE', bold = true },
 		["Title"]      = { fg = c['bl'],   bg = 'NONE', bold = true },
-		["ErrorMsg"]   = { fg = c['re-2'], bg = 'NONE', bold = true },
+		["ErrorMsg"]   = { fg = c['error'], bg = 'NONE', bold = true },
 		["MoreMsg"]    = { fg = c['or'],   bg = 'NONE' },
 		["Question"]   = { fg = c['or'],   bg = 'NONE' },
 
@@ -154,7 +158,7 @@ M.groups = function()
 		["CursorIM"]     = { fg = c['bg'], bg = c['tx'] },
 		["TermCursor"]   = { fg = c['bg'], bg = c['tx'] },
 		["TermCursorNC"] = { fg = c['bg'], bg = c['tx-3'] },
-		["Visual"]       = { fg = 'NONE',  bg = c['ui-2'] },
+		["Visual"]       = { fg = 'NONE',  bg = c['bg-visual'] },
 		["VisualNOS"]    = { fg = 'NONE',  bg = c['ui-3'] },
 
 		-- Diagnostics
