@@ -7,9 +7,9 @@ M.groups = function()
 
 	--- @type table<string, vim.api.keyset.highlight>
 	return {
-		['NeoTreeNormal']      = { bg = c['bg-2'] },
-		['NeoTreeNormalNC']    = { bg = c['bg-2'] },
-		['NeoTreeEndOfBuffer'] = { bg = c['bg-2'] },
+		['NeoTreeNormal']      = { bg = c['bg-sidebar'] },
+		['NeoTreeNormalNC']    = { bg = c['bg-sidebar'] },
+		['NeoTreeEndOfBuffer'] = { bg = c['bg-sidebar'] },
 		['NeoTreeCursorLine']  = { bg = c['ui']   },
 
 		['NeoTreeBufferNumber']       = { fg = 'NONE',    bg = 'NONE' },
@@ -27,7 +27,7 @@ M.groups = function()
 		['NeoTreeFilterTerm']         = { fg = c['cy'],   bg = 'NONE' },
 
 		['NeoTreeFloatBorder']        = { link = 'FloatBorder' },
-		['NeoTreeFloatTitle']         = { fg   = c['tx'], bg = c['bg-2'] },
+		['NeoTreeFloatTitle']         = { fg   = c['fg'], bg = c['bg-sidebar'] },
 		['NeoTreeTitleBar']           = { fg   = 'NONE',  bg = 'NONE' },
 
 		['NeoTreeGitAdded']           = { fg = c['gr'],   bg = 'NONE' },

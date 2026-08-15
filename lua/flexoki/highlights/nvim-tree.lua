@@ -9,7 +9,7 @@ M.groups = function()
 
 	--- @type table<string, vim.api.keyset.highlight>
 	return {
-		["NvimTreeNormal"]           = { bg   = c['bg-2'] },
+		["NvimTreeNormal"]           = { bg   = c['bg-sidebar'] },
 		["NvimTreeIndentMarker"]     = { link = 'Comment' },
 
 		["NvimTreeFolderIcon"]       = { fg = c['ye'], bg = 'NONE' },

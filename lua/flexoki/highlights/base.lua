@@ -10,30 +10,15 @@ M.groups = function()
 	local transparent_bg = opts.transparent and 'NONE' or c['bg']
 	local dim_bg = opts.dim_inactive and c['bg-2'] or 'NONE'
 
-	local floatBg = 'bg'
-	local floatBorderBg = 'bg'
-
-	if opts.float_window_style == 'auto' then
-		if vim.o.winborder == 'solid' then
-			floatBorderBg = 'ui'
-		elseif vim.o.winborder == 'none' or vim.o.winborder == '' then
-			floatBg = 'ui'
-		end
-	elseif opts.float_window_style == 'borderless' then
-		floatBg = 'ui'
-	elseif opts.float_window_style == 'solid' then
-		floatBorderBg = 'ui'
-	end
-
 	--- @type table<string, vim.api.keyset.highlight>
 	return {
 		-- Editor
 		["Normal"]     = { fg = c['tx'], bg = transparent_bg },
 		["NormalNC"]   = { fg = c['tx'], bg = dim_bg },
-		["NormalSB"]   = { fg = c['tx-2'], bg = c['bg-2'] },
-		["NormalFloat"]    = { fg = c['tx-2'], bg = c[floatBg] },
-		["FloatBorder"]    = { fg = c['tx-3'], bg = c[floatBorderBg] },
-		["FloatTitle"]     = { fg = c['tx-2'], bg = c[floatBorderBg] },
+		["NormalSB"]   = { fg = c['fg-sidebar'], bg = c['bg-sidebar'] },
+		["NormalFloat"]    = { fg = c['fg-float'], bg = c['bg-float'] },
+		["FloatBorder"]    = { fg = c['border'],   bg = c['bg-float-border'] },
+		["FloatTitle"]     = { fg = c['fg-float'], bg = c['bg-float-border'] },
 		["Underlined"] = { fg = 'NONE',  bg = 'NONE', underline = true },
 		["Bold"]       = { fg = 'NONE',  bg = 'NONE', bold      = true },
 		["Italic"]     = { fg = 'NONE',  bg = 'NONE', italic    = true },
@@ -103,7 +88,7 @@ M.groups = function()
 
 		-- UI
 		["SignColumn"]     = { fg = 'NONE', bg = 'NONE' },
-		["SignColumnSB"]   = { fg = c['tx-3'], bg = c['bg-2'] },
+		["SignColumnSB"]   = { fg = c['comment'], bg = c['bg-sidebar'] },
 		["FoldColumn"]     = { fg = c['ui-2'], bg = c['bg-2'] },
 
 		["MsgArea"]        = { fg = 'NONE', bg = c['bg-2'] },
@@ -124,10 +109,10 @@ M.groups = function()
 		["TabLineFill"] = { fg = c['tx-3'], bg = c['ui'] },
 
 		-- Status line
-		["StatusLine"]       = { fg = c['tx'],   bg = c['ui-3'] },
+		["StatusLine"]       = { fg = c['fg'],     bg = c['bg-statusline'] },
 		["StatusLineNC"]     = { fg = c['tx-2'], bg = c['ui'] },
-		["StatusLineTerm"]   = { fg = c['tx-2'], bg = c['ui-3'] },
-		["StatusLineTermNC"] = { fg = c['tx-2'], bg = c['ui-3'] },
+		["StatusLineTerm"]   = { fg = c['fg-dark'], bg = c['bg-statusline'] },
+		["StatusLineTermNC"] = { fg = c['fg-dark'], bg = c['bg-statusline'] },
 
 		["WinBar"]   = { fg = c['tx'],   bg = c['ui-3'] },
 		["WinBarNC"] = { fg = c['tx-2'], bg = c['ui'] },
