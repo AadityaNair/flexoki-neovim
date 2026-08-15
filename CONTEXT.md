@@ -8,7 +8,7 @@ Neovim colorscheme plugin using the [Flexoki](https://stephango.com/flexoki) col
 lua/flexoki/
 ├── init.lua              # Entry point: colorscheme() and setup()
 ├── config.lua            # All user-facing options
-├── palette.lua           # Base colors + variant mapping (dark/light)
+├── palette.lua           # Spec colors, variant mapping, semantic slots
 ├── theme.lua             # Applies highlights, terminal colors, runs hooks
 ├── util.lua              # blend() and highlight() helpers
 └── highlights/
@@ -36,40 +36,77 @@ lua/flexoki/
     ├── whichkey.lua
     ├── dashboard.lua
     └── _template.lua     # Empty template for new modules
+
+lua/lualine/themes/
+└── flexoki-dark.lua      # lualine theme (dark only)
 ```
 
 ## Palette system
 
-Colors are defined in `palette.lua`. There are 41 base hex values (grayscale + 8 hues at 600/400 levels), mapped to short semantic keys per variant:
+`palette.lua` holds the complete published Flexoki spec — 119 hex values (14 base tones plus 8 hues at 13 levels each), generated verbatim from [`kepano/flexoki`](https://github.com/kepano/flexoki/blob/main/css/flexoki.css). Those raw values are never used directly by highlight modules; they feed the variant tables below.
 
-| Key | Purpose | Dark example | Light example |
-|-----|---------|-------------|---------------|
+`palette.palette()` returns a single flat table with three layers of keys.
+
+### 1. Base UI keys
+
+| Key | Purpose | Dark | Light |
+|-----|---------|------|-------|
 | `bg` | Background | `#100F0F` | `#FFFCF0` |
 | `bg-2` | Sidebar/float bg | `#1C1B1A` | `#F2F0E5` |
-| `ui` | Subtle UI (borders, cursorline) | `#282726` | `#E6E4D9` |
+| `ui` | Subtle UI (cursorline) | `#282726` | `#E6E4D9` |
 | `ui-2` | Medium UI | `#343331` | `#DAD8CE` |
 | `ui-3` | Strong UI | `#403E3C` | `#CECDC3` |
 | `tx-3` | Muted text (comments, line numbers) | `#575653` | `#B7B5AC` |
 | `tx-2` | Dimmed text | `#878580` | `#6F6E69` |
 | `tx` | Primary text | `#CECDC3` | `#100F0F` |
-| `re` / `re-2` | Red (primary/secondary) | `#D14D41` / `#AF3029` | `#AF3029` / `#D14D41` |
-| `or` / `or-2` | Orange | `#DA702C` / `#BC5215` | swapped |
-| `ye` / `ye-2` | Yellow | `#D0A215` / `#AD8301` | swapped |
-| `gr` / `gr-2` | Green | `#879A39` / `#66800B` | swapped |
-| `cy` / `cy-2` | Cyan | `#3AA99F` / `#24837B` | swapped |
-| `bl` / `bl-2` | Blue | `#4385BE` / `#205EA6` | swapped |
-| `pu` / `pu-2` | Purple | `#8B7EC8` / `#5E409D` | swapped |
-| `ma` / `ma-2` | Magenta | `#CE5D97` / `#A02F6F` | swapped |
 
-In dark mode, primary hue (`re`, `bl`, etc.) is the 400-level (brighter). In light mode it's the 600-level (darker). The `-2` variant is always the opposite. This means the same key works correctly for both variants.
+### 2. Accent tiers
 
-**Always use bracket notation** (`c['re']`, `c['bg-2']`), never dot notation (`c.red`, `c.error_red`). The palette has no dot-style keys — using them silently produces `nil` and breaks highlights.
+Eight hues — `re` `or` `ye` `gr` `cy` `bl` `pu` `ma` — each with five tiers:
+
+| Suffix | Purpose | Dark level | Light level |
+|--------|---------|-----------|------------|
+| *(none)* | Primary accent | 400 | 600 |
+| `-2` | Dim / secondary accent | 600 | 400 |
+| `-3` | Bright / emphasis | 300 | 700 |
+| `-bg` | Subtle tinted background | 950 | 50 |
+| `-bg-2` | Stronger tinted background | 900 | 100 |
+
+So `c['re-3']` is bright red, `c['bl-bg']` is a subtle blue-tinted background. 40 accent slots in total.
+
+The mirroring follows Flexoki's own rule: dark mode takes the 400 level as its primary accent, light mode takes 600, and every other tier is mirrored around that. The same key therefore works in both variants. These are generated in `palette.lua` from a hue list and a per-variant level map, so the rule is stated once; a missing level raises an assertion rather than silently producing `nil`.
+
+### 3. Semantic slots
+
+Derived on top of the variant. Prefer these over naming a hue directly — a highlight should say what it means, so that one `on_colors` override retunes everything related.
+
+| Group | Keys |
+|-------|------|
+| Text | `fg` `fg-dark` `fg-gutter` `fg-float` `fg-sidebar` `comment` |
+| Backgrounds | `bg-float` `bg-float-border` `bg-popup` `bg-sidebar` `bg-statusline` `bg-visual` `bg-search` `bg-highlight` |
+| Borders | `border` `border-highlight` |
+| Diagnostics | `error` `warning` `info` `hint` `ok` `todo` and `error-bg` `warning-bg` `info-bg` `hint-bg` `ok-bg` |
+| Git | `git-add` `git-change` `git-delete` `git-ignore` |
+| Diff | `diff-add` `diff-change` `diff-delete` `diff-text` |
+| Cycling | `rainbow` and `rainbow-bg` (8-entry arrays, matched by index) |
+| Terminal | `term-0` … `term-15` |
+| Literal | `none` (the string `'NONE'`) |
+
+`bg-float` / `bg-float-border` already account for `float_window_style` and `vim.o.winborder`, so modules drawing a float should use them rather than re-deriving the answer.
+
+**Always use bracket notation** (`c['re']`, `c['error']`, `c['bg-2']`), never dot notation (`c.red`, `c.error_red`). The palette has no dot-style keys — using them silently produces `nil` and breaks highlights.
+
+### Resolution order
+
+`palette.palette()` resolves once and caches; `theme.set_highlights()` calls `palette.reset()` first so config and background changes take effect. Each resolution works on a deepcopy of the variant, so hooks cannot leak into later resolutions. Order is: variant colours → semantic slots → `on_colors`. Because `on_colors` runs last, it can override derived slots (`c['error']`, `c['bg-float']`), not just raw hues.
 
 ## Config options
 
 ```lua
 require('flexoki').setup({
     variant = 'auto',           -- 'auto' | 'dark' | 'light'
+    dark_variant = 'dark',      -- used when variant = 'auto' and background = dark
+    light_variant = 'light',    -- used when variant = 'auto' and background = light
     transparent = false,        -- Normal bg = NONE
     terminal_colors = true,     -- set vim.g.terminal_color_*
     dim_inactive = false,       -- NormalNC gets darker bg
@@ -80,7 +117,7 @@ require('flexoki').setup({
         variables = {},
     },
     float_window_style = 'auto', -- 'auto' | 'border' | 'solid' | 'borderless'
-    on_colors = function(colors) end,      -- mutate palette before highlights
+    on_colors = function(colors) end,      -- mutate palette (incl. semantic slots) before highlights
     on_highlights = function(hl, c) end,   -- mutate highlights before applying
     highlight_groups = {},                  -- final overrides (highest priority)
 })
@@ -115,8 +152,9 @@ kinds.kinds(ret, "PluginKind%s")  -- generates PluginKindClass, PluginKindFuncti
 - **Palette key typos silently break highlights.** `c['re']` works, `c.red` / `c.error_red` returns nil. All disabled modules were originally broken because of this.
 - **`link` overrides all other attributes.** If a highlight needs both a color and a style (e.g. italic), use direct `fg`/`bg` values, not `link`. This matters for style-aware groups (`@function`, `@keyword`, `@variable`, `Comment`).
 - **`util.highlight()` sets fg/bg to `'none'` when absent.** This is fine for most groups but means link-only groups get extra properties — Neovim ignores them when `link` is present.
-- **`util.blend(fg, bg, alpha)`** — alpha=0 is pure bg, alpha=1 is pure fg. Use ~0.1 for subtle tinted backgrounds (diagnostic virtual text), ~0.3 for borders (notify), ~0.8 for prominent backgrounds (treesitter-context).
-- **`palette.palette()` is called per-module.** Each highlight module independently calls it. The `on_colors` hook runs each time but mutates the same underlying table, so this is safe.
+- **Don't blend a tinted background — use the `-bg` tier.** Flexoki publishes those shades, so `c['re-bg']` beats `util.blend(c['re'], c['bg'], 0.1)`: it is the real colour rather than an interpolation, costs nothing per apply, and does not silently drift when `transparent = true` (where the blend mixes against a background that is not on screen).
+- **`util.blend(fg, bg, alpha)`** — alpha=0 is pure bg, alpha=1 is pure fg. Still the right tool for a *dimmed accent*, which the spec has no level for: nvim-notify's borders use ~0.3, matching tokyonight.
+- **Name the meaning, not the hue.** `c['error']` over `c['re']`, `c['git-add']` over `c['gr']`. Groups that named hues directly are why `WarningMsg` was red and identical to an error for so long.
 
 ## Color assignments for todo-comments
 
@@ -138,5 +176,6 @@ Each keyword uses a unique color — no collisions:
 - **Extras system** — tokyonight generates configs for 40+ external tools (alacritty, kitty, tmux, etc.). Not ported.
 - **Caching** — tokyonight caches resolved highlights to JSON. Not needed at current scale.
 - **Plugin auto-detection** — tokyonight auto-detects lazy.nvim plugins. Here all modules load unconditionally.
-- **Statusline themes** — no dedicated lualine/lightline/barbecue theme files.
-- **HSLuv color space** — tokyonight uses it to generate the Day variant by inverting dark colors perceptually. Flexoki has hand-tuned light/dark palettes instead.
+- **Statusline themes** — only `lua/lualine/themes/flexoki-dark.lua` exists; there is no light lualine theme and no lightline/barbecue theme.
+- **HSLuv color space** — tokyonight uses it to generate the Day variant by inverting dark colors perceptually, and to brighten the ANSI colors. Flexoki publishes hand-tuned levels for both variants, so the same results come from picking a different level (see the accent tier table) with no color-space math.
+- **A handful of highlight groups** — `@namespace.builtin`, `@number.float`, `ComplHint`, `LspInfoBorder`, and the legacy `DiagnosticWarning` / `DiagnosticInformation` aliases are not defined.
