@@ -6,22 +6,9 @@ local M = {}
 
 ---@param c table
 M.terminal = function(c)
-	vim.g.terminal_color_0  = c['bg']
-	vim.g.terminal_color_8  = c['ui-3']
-	vim.g.terminal_color_1  = c['re-2']
-	vim.g.terminal_color_9  = c['re']
-	vim.g.terminal_color_2  = c['gr-2']
-	vim.g.terminal_color_10 = c['gr']
-	vim.g.terminal_color_3  = c['ye-2']
-	vim.g.terminal_color_11 = c['ye']
-	vim.g.terminal_color_4  = c['bl-2']
-	vim.g.terminal_color_12 = c['bl']
-	vim.g.terminal_color_5  = c['ma-2']
-	vim.g.terminal_color_13 = c['ma']
-	vim.g.terminal_color_6  = c['cy-2']
-	vim.g.terminal_color_14 = c['cy']
-	vim.g.terminal_color_7  = c['tx-2']
-	vim.g.terminal_color_15 = c['tx']
+	for i = 0, 15 do
+		vim.g['terminal_color_' .. i] = c['term-' .. i]
+	end
 end
 
 ---@param opts FlexokiOptions

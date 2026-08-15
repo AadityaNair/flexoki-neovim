@@ -303,14 +303,17 @@ local function semantics(c)
 			c['ma-bg'], c['pu-bg'], c['or-bg'], c['re-bg'],
 		},
 
-		-- Terminal ANSI 0-15
+		-- Terminal ANSI 0-15. Normal takes the primary accent, bright takes
+		-- the -3 tier, which is a genuinely lighter shade in dark mode and a
+		-- deeper one in light -- so the two halves stay distinguishable
+		-- instead of the bright half repeating the normal half.
 		['term-0']  = c['bg'],   ['term-8']  = c['ui-3'],
-		['term-1']  = c['re-2'], ['term-9']  = c['re'],
-		['term-2']  = c['gr-2'], ['term-10'] = c['gr'],
-		['term-3']  = c['ye-2'], ['term-11'] = c['ye'],
-		['term-4']  = c['bl-2'], ['term-12'] = c['bl'],
-		['term-5']  = c['ma-2'], ['term-13'] = c['ma'],
-		['term-6']  = c['cy-2'], ['term-14'] = c['cy'],
+		['term-1']  = c['re'],   ['term-9']  = c['re-3'],
+		['term-2']  = c['gr'],   ['term-10'] = c['gr-3'],
+		['term-3']  = c['ye'],   ['term-11'] = c['ye-3'],
+		['term-4']  = c['bl'],   ['term-12'] = c['bl-3'],
+		['term-5']  = c['ma'],   ['term-13'] = c['ma-3'],
+		['term-6']  = c['cy'],   ['term-14'] = c['cy-3'],
 		['term-7']  = c['tx-2'], ['term-15'] = c['tx'],
 	}
 end
