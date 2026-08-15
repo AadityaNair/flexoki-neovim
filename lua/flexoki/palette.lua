@@ -210,25 +210,152 @@ local variants = {
 	}),
 }
 
-M.palette = function ()
-	local variant = {}
+--- Resolve the float and border backgrounds from float_window_style.
+--- Kept here rather than in a highlight module so every module that draws
+--- a float agrees on the answer.
+--- @param c table resolved variant
+--- @return string float_bg, string border_bg
+local function float_backgrounds(c)
+	local style = config.options.float_window_style
 
-	if config.options.variant == 'auto' then
-		if vim.o.background == 'dark' then
-			variant = variants[config.options.dark_variant]
-		else
-			variant = variants[config.options.light_variant]
+	if style == 'borderless' then
+		return c['ui'], c['bg']
+	elseif style == 'solid' then
+		return c['bg'], c['ui']
+	elseif style == 'auto' then
+		if vim.o.winborder == 'solid' then
+			return c['bg'], c['ui']
+		elseif vim.o.winborder == 'none' or vim.o.winborder == '' then
+			return c['ui'], c['bg']
 		end
+	end
+
+	return c['bg'], c['bg']
+end
+
+--- Semantic slots derived from the variant's colours. Everything here is
+--- an alias for a spec colour -- no blending -- so that highlight modules
+--- can say what a colour means instead of which hue it happens to be.
+--- @param c table resolved variant
+--- @return table<string, any>
+local function semantics(c)
+	local float_bg, float_border_bg = float_backgrounds(c)
+
+	return {
+		['none'] = 'NONE',
+
+		-- Text
+		['fg']         = c['tx'],
+		['fg-dark']    = c['tx-2'],
+		['fg-gutter']  = c['ui-3'],
+		['fg-float']   = c['tx-2'],
+		['fg-sidebar'] = c['tx-2'],
+		['comment']    = c['tx-3'],
+
+		-- Backgrounds
+		['bg-float']        = float_bg,
+		['bg-float-border'] = float_border_bg,
+		['bg-popup']        = c['bg-2'],
+		['bg-sidebar']      = c['bg-2'],
+		['bg-statusline']   = c['ui-3'],
+		['bg-visual']       = c['ui-2'],
+		['bg-search']       = c['ye'],
+		['bg-highlight']    = c['ui'],
+
+		-- Borders
+		['border']           = c['tx-3'],
+		['border-highlight'] = c['bl-2'],
+
+		-- Diagnostics
+		['error']   = c['re'],
+		['warning'] = c['ye'],
+		['info']    = c['cy'],
+		['hint']    = c['bl'],
+		['ok']      = c['gr'],
+		['todo']    = c['ma'],
+
+		['error-bg']   = c['re-bg'],
+		['warning-bg'] = c['ye-bg'],
+		['info-bg']    = c['cy-bg'],
+		['hint-bg']    = c['bl-bg'],
+		['ok-bg']      = c['gr-bg'],
+
+		-- Git status
+		['git-add']    = c['gr'],
+		['git-change'] = c['or'],
+		['git-delete'] = c['re'],
+		['git-ignore'] = c['tx-3'],
+
+		-- Diff backgrounds
+		['diff-add']    = c['gr-bg'],
+		['diff-change'] = c['bl-bg'],
+		['diff-delete'] = c['re-bg'],
+		['diff-text']   = c['bl-bg-2'],
+
+		-- Cycled for things like markdown heading levels
+		['rainbow'] = {
+			c['bl'], c['ye'], c['gr'], c['cy'],
+			c['ma'], c['pu'], c['or'], c['re'],
+		},
+
+		-- Terminal ANSI 0-15
+		['term-0']  = c['bg'],   ['term-8']  = c['ui-3'],
+		['term-1']  = c['re-2'], ['term-9']  = c['re'],
+		['term-2']  = c['gr-2'], ['term-10'] = c['gr'],
+		['term-3']  = c['ye-2'], ['term-11'] = c['ye'],
+		['term-4']  = c['bl-2'], ['term-12'] = c['bl'],
+		['term-5']  = c['ma-2'], ['term-13'] = c['ma'],
+		['term-6']  = c['cy-2'], ['term-14'] = c['cy'],
+		['term-7']  = c['tx-2'], ['term-15'] = c['tx'],
+	}
+end
+
+-- Resolved palette for the current variant. Built by M.resolve(), reused by
+-- every M.palette() call until M.reset() drops it.
+local cache = nil
+
+--- Build the palette for the configured variant: variant colours, then the
+--- derived semantic slots, then the user's on_colors hook.
+--- @return table
+local function resolve()
+	local name = config.options.variant
+
+	if name == 'auto' then
+		name = vim.o.background == 'dark'
+			and config.options.dark_variant
+			or config.options.light_variant
 	else
-		variant = variants[config.options.variant]
-		vim.o.background = variant.background
+		vim.o.background = variants[name].background
 	end
 
+	-- Copy so on_colors mutates this resolution only, not the shared table.
+	local c = vim.deepcopy(variants[name])
+
+	for key, value in pairs(semantics(c)) do
+		c[key] = value
+	end
+
+	-- Runs last so it can override derived slots, not just raw hues.
 	if config.options.on_colors then
-		config.options.on_colors(variant)
+		config.options.on_colors(c)
 	end
 
-	return variant
+	return c
+end
+
+--- Drop the cached palette. Called when the colorscheme is (re)applied so
+--- that config and background changes take effect.
+M.reset = function()
+	cache = nil
+end
+
+--- @return table
+M.palette = function()
+	if not cache then
+		cache = resolve()
+	end
+
+	return cache
 end
 
 return M

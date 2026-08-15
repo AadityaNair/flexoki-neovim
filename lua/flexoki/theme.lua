@@ -26,6 +26,10 @@ end
 
 ---@param opts FlexokiOptions
 M.set_highlights = function(opts)
+	-- Config or background may have changed since the last apply, and the
+	-- 21 highlight modules below all call palette.palette(); resolve once.
+	palette.reset()
+
 	local c = palette.palette()
 	local highlight_groups = highlights.groups()
 
